@@ -7,6 +7,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { loadDataset } from './lib/data.mjs';
+import { loadSiteConfig } from './lib/config.mjs';
 import { toCsv } from './lib/csv.mjs';
 import { homePage } from './pages/home.mjs';
 import { companyPage } from './pages/company.mjs';
@@ -21,9 +22,11 @@ const outDir = opt('--out', 'dist');
 const sample = args.includes('--sample');
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 
-const siteConfig = JSON.parse(fs.readFileSync(path.join(root, 'site.config.json'), 'utf8'));
-if (process.env.SITE_URL) siteConfig.siteUrl = process.env.SITE_URL;
-if (process.env.PRO_ENABLED) siteConfig.pro.enabled = process.env.PRO_ENABLED === 'true';
+const siteConfig = loadSiteConfig();
+// Preview hosting (e.g. Vercel) has no /api backend, and should stay out of search
+// results so it never competes with the real domain later.
+const apiEnabled = process.env.API_ENABLED !== 'false';
+const noindex = process.env.NOINDEX === 'true';
 
 const sampleFlag = fs.existsSync(path.join(dataDir, 'SAMPLE'));
 if (sampleFlag && !sample) {
@@ -37,7 +40,7 @@ const ds = loadDataset(dataDir, { siteConfig });
 // unchanged pages are not re-uploaded on deploy.
 const assetHash = crypto.createHash('sha256');
 for (const f of fs.readdirSync(path.join(root, 'site/assets')).sort()) assetHash.update(fs.readFileSync(path.join(root, 'site/assets', f)));
-const ctx = { ds, siteConfig, sample, buildId: assetHash.digest('hex').slice(0, 10) };
+const ctx = { ds, siteConfig, sample, noindex, apiEnabled, buildId: assetHash.digest('hex').slice(0, 10) };
 
 fs.rmSync(outDir, { recursive: true, force: true });
 let pages = 0;
@@ -87,7 +90,7 @@ if (ds.latestPeriod) {
 
 const base = siteConfig.siteUrl.replace(/\/$/, '');
 fs.writeFileSync(path.join(outDir, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sitemap.map((u) => `<url><loc>${base}${u}</loc></url>`).join('\n')}\n</urlset>\n`);
-fs.writeFileSync(path.join(outDir, 'robots.txt'), sample ? 'User-agent: *\nDisallow: /\n' : `User-agent: *\nDisallow: /account/\nDisallow: /api/\nSitemap: ${base}/sitemap.xml\n`);
+fs.writeFileSync(path.join(outDir, 'robots.txt'), sample || noindex ? 'User-agent: *\nDisallow: /\n' : `User-agent: *\nDisallow: /account/\nDisallow: /api/\nSitemap: ${base}/sitemap.xml\n`);
 
 // Assets are requested with ?v=<buildId>, so they can be cached for a long time.
 fs.writeFileSync(path.join(outDir, '_headers'), `/*

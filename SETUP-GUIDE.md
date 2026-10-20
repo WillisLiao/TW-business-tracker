@@ -30,6 +30,22 @@ Done: the code lives in `WillisLiao/TW-business-tracker`. Keep the repository
 **private** (*Settings → General → Danger zone → Change visibility*), because the
 `data/` folder holds the full history that Pro subscribers pay for.
 
+## Quick preview on Vercel (free, no domain needed)
+
+To see the site online before doing the full setup:
+
+1. Go to <https://vercel.com> and choose **Sign up → Continue with GitHub**.
+2. Click **Add New… → Project**, find `TW-business-tracker` and click **Import**.
+   If it is not listed, click **Adjust GitHub App Permissions** and allow this repository.
+3. Change nothing (the project's `vercel.json` already holds the settings) and click **Deploy**.
+4. When it finishes, Vercel shows your address, normally `https://tw-business-tracker.vercel.app`.
+   It updates by itself whenever new data arrives.
+
+On the preview, the email forms say "coming soon", because sign-in and alerts need the
+Cloudflare setup below. The preview is also hidden from Google, so it won't compete with
+your real domain later. Vercel's free plan is for non-commercial use, so move to Cloudflare
+(steps 3–9 below) before you start charging.
+
 ## 2. Pick a name and domain
 
 1. Choose a name. "Taiwan Monthly" is only a working title. Check that a matching `.com` is free.

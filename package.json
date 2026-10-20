@@ -23,6 +23,7 @@
     "wrangler": "4.145.0"
   },
   "dependencies": {
-    "@resvg/resvg-js": "2.6.2"
+    "@resvg/resvg-js": "2.6.2",
+    "dejavu-fonts-ttf": "2.37.3"
   }
 }

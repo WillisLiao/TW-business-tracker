@@ -7,6 +7,7 @@ import path from 'node:path';
 import { listPeriods, readPeriod, readJson } from '../../pipeline/lib/store.mjs';
 import { addMonths } from '../../pipeline/lib/period.mjs';
 import { slugify } from './format.mjs';
+import { loadSiteConfig } from './config.mjs';
 
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), '../..');
 const loadConfig = (f) => JSON.parse(fs.readFileSync(path.join(root, f), 'utf8'));
@@ -15,7 +16,7 @@ export const MARKET_LABEL = { TWSE: 'Listed (TWSE)', TPEx: 'OTC (TPEx)' };
 
 const ratio = (a, b) => (a != null && b != null && b > 0 ? a / b - 1 : null);
 
-export function loadDataset(dataDir, { siteConfig = loadConfig('site.config.json') } = {}) {
+export function loadDataset(dataDir, { siteConfig = loadSiteConfig() } = {}) {
   const industries = loadConfig('config/industries.json');
   const { baskets } = loadConfig('config/baskets.json');
   const profiles = readJson(path.join(dataDir, 'companies.json'), {});

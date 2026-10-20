@@ -19,7 +19,11 @@ const sample = args.includes('--sample');
 const W = 1200;
 const H = 675;
 const C = { bg: '#fcfcfb', ink: '#0b0b0b', ink2: '#52514e', muted: '#6b6a66', grid: '#e1e0d9', axis: '#c3c2b7', pos: '#2a78d6', neg: '#e34948', banner: '#fab219' };
-const FONT = 'Inter, DejaVu Sans, Liberation Sans, Arial, sans-serif';
+// The font ships with the project (dejavu-fonts-ttf), so images render the same
+// on any build machine, including ones with no system fonts.
+const FONT = 'DejaVu Sans';
+const fontDir = path.join(path.dirname(new URL(import.meta.url).pathname), '../node_modules/dejavu-fonts-ttf/ttf');
+const FONT_FILES = ['DejaVuSans.ttf', 'DejaVuSans-Bold.ttf'].map((f) => path.join(fontDir, f));
 
 const ds = loadDataset(dataDir);
 const period = ds.latestPeriod;
@@ -90,7 +94,7 @@ if (up.length) {
 
 fs.mkdirSync(outDir, { recursive: true });
 for (const [name, svg] of Object.entries(images)) {
-  const png = new Resvg(svg, { font: { loadSystemFonts: true, defaultFontFamily: 'DejaVu Sans' }, fitTo: { mode: 'width', value: W } }).render().asPng();
+  const png = new Resvg(svg, { font: { fontFiles: FONT_FILES, loadSystemFonts: false, defaultFontFamily: FONT }, fitTo: { mode: 'width', value: W } }).render().asPng();
   fs.writeFileSync(path.join(outDir, `${period}-${name}.png`), png);
   fs.writeFileSync(path.join(outDir, `latest-${name}.png`), png);
 }

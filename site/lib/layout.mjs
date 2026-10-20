@@ -13,7 +13,7 @@ export function layout(ctx, { title, description, path: pagePath, body, noindex 
 <title>${esc(fullTitle)}</title>
 <meta name="description" content="${esc(description)}">
 <link rel="canonical" href="${esc(canonical)}">
-${noindex || sample ? '<meta name="robots" content="noindex">' : ''}
+${noindex || sample || ctx.noindex ? '<meta name="robots" content="noindex">' : ''}
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(description)}">
 <meta property="og:type" content="website">
@@ -88,6 +88,9 @@ export function proCta(ctx, { heading, text, watch = '' } = {}) {
   const h = heading || 'Get an email the day these numbers come out';
   if (cfg.pro.enabled) {
     return `<aside class="cta"><div><h2>${esc(h)}</h2><p>${esc(text || `Pro sends same-day alerts for up to ${cfg.pro.maxWatchlist} companies, plus full-history downloads. ${cfg.pro.trialDays}-day free trial, cancel any time.`)}</p></div><a class="button" href="/pricing/${watch ? `?watch=${esc(watch)}` : ''}">See Pro</a></aside>`;
+  }
+  if (ctx.apiEnabled === false) {
+    return `<aside class="cta"><div><h2>${esc(h)}</h2><p>Email alerts are coming soon.</p></div></aside>`;
   }
   return `<aside class="cta"><div><h2>${esc(h)}</h2><p>${esc(text || 'Email alerts are coming soon. Leave your email and we will tell you once when they launch. No spam, no sharing.')}</p></div>
 <form class="waitlist" data-waitlist><label class="visually-hidden" for="wl-${watch || 'x'}">Email</label><input id="wl-${watch || 'x'}" type="email" name="email" required placeholder="you@example.com"><input type="hidden" name="interest" value="${esc(watch)}"><button class="button" type="submit">Notify me</button><p class="form-msg small" role="status"></p></form></aside>`;
