@@ -100,11 +100,12 @@ for (const market of Object.keys(SOURCES)) {
 // New companies get proper English names from the profile endpoints.
 const companies = readJson(p.companies, {});
 if (!fixtureDir && Object.values(companies).some((c) => !c.nameEn && !c.fullNameEn)) {
-  const due = !status.profilesRefreshedAt || Date.now() - Date.parse(status.profilesRefreshedAt) > 6 * 24 * 3600 * 1000;
+  const due = !status.profilesRefreshedAt || !status.profileFields || Date.now() - Date.parse(status.profilesRefreshedAt) > 6 * 24 * 3600 * 1000;
   if (due || allAdded.some((a) => !companies[a.code]?.nameEn)) {
     summary.push('Refreshing company profiles...');
     const r = await refreshProfiles(dataDir, { log: (m) => summary.push(m) });
     if (!r.failures.length) status.profilesRefreshedAt = now;
+    status.profileFields = { ...(status.profileFields || {}), ...r.fields };
   }
 }
 

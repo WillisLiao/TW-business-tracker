@@ -7,13 +7,17 @@ import { fetchWithRetry } from './lib/http.mjs';
 import { normaliseProfileRows } from './lib/fields.mjs';
 import { mergeProfiles } from './lib/store.mjs';
 
+// Returns the field names each source used, so a format change can be diagnosed
+// from data/status.json without access to the run logs.
 export async function refreshProfiles(dataDir, { log = console.log } = {}) {
   let total = 0;
   const failures = [];
+  const fields = {};
   for (const [market, src] of Object.entries(SOURCES)) {
     try {
       const rows = await fetchWithRetry(src.profile);
       const { records, fieldMap } = normaliseProfileRows(rows, market);
+      fields[market] = { keys: Object.keys(rows[0] || {}), mapped: fieldMap };
       if (!fieldMap.nameEn && !fieldMap.fullNameEn) {
         log(`  ${market}: no English-name field found in profiles (keys: ${Object.keys(rows[0] || {}).join(', ')})`);
       }
@@ -25,7 +29,7 @@ export async function refreshProfiles(dataDir, { log = console.log } = {}) {
       log(`  ${market}: profile refresh failed - ${err.message}`);
     }
   }
-  return { changed: total, failures };
+  return { changed: total, failures, fields };
 }
 
 if (import.meta.url === pathToFileURL(process.argv[1]).href) {
