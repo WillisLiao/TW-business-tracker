@@ -40,7 +40,7 @@ export function homePage(ctx) {
 ${meter(prog.share, 'Share of companies that have reported')}
 <div class="tiles">
 ${statTile('All companies, combined growth', pct(total.yoy), { note: `${label(period)} vs ${label(addMonths(period, -12))}, same ${int(total.compared)} companies` })}
-${statTile('Combined revenue so far', ntd(total.rev))}
+${statTile(prog.complete ? 'Combined revenue' : 'Combined revenue so far', ntd(total.rev))}
 ${tsmc ? statTile(`TSMC, ${label(period)}`, ntd(tsmc.rev), { delta: `${pct(tsmc.yoy)} YoY`, deltaClass: signClass(tsmc.yoy), note: '<a href="/company/2330/">Full history</a>' }) : statTile('TSMC', 'Not yet reported', { note: '<a href="/company/2330/">Full history</a>' })}
 ${statTile('Record highs', int(highs.length), { note: 'companies at their highest monthly revenue in our data' })}
 </div>

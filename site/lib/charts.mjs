@@ -23,7 +23,8 @@ function niceStep(range, ticks) {
 }
 
 function niceDomain(min, max, ticks = 4) {
-  if (min === max) { max = min + 1; }
+  // A single value (e.g. one month of data) gets 25% headroom, not a fixed +1.
+  if (min === max) max = min === 0 ? 1 : min * 1.25;
   const lo = Math.min(0, min);
   const hi = Math.max(0, max);
   const step = niceStep(hi - lo, ticks);
