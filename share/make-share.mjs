@@ -9,6 +9,7 @@ import { Resvg } from '@resvg/resvg-js';
 import { loadDataset } from '../site/lib/data.mjs';
 import { ntd, pct, esc } from '../site/lib/format.mjs';
 import { periodLabel } from '../pipeline/lib/period.mjs';
+import { setLang } from '../site/lib/lang.mjs';
 
 const args = process.argv.slice(2);
 const opt = (name, fallback) => (args.includes(name) ? args[args.indexOf(name) + 1] : fallback);
@@ -107,4 +108,16 @@ const caption = [
   `Every company, in English, with sources: ${cfg.siteUrl.replace(/\/$/, '')}/reports/${period}/`,
 ].filter(Boolean).join('\n');
 fs.writeFileSync(path.join(outDir, 'latest-caption.txt'), caption + '\n');
+
+// Chinese caption for Taiwanese communities (Threads, PTT, Facebook groups).
+setLang('zh');
+const [cy, cm] = period.split('-').map(Number);
+const captionZh = [
+  `${cy}年${cm}月台股月營收${prog.complete ? '' : '（公布中）'}：${total.reported}家上市櫃公司，合計年增${pct(total.yoy)}（同一批公司比較）。`,
+  tsmc ? `台積電：${ntd(tsmc.rev)}，年增${pct(tsmc.yoy)}。` : '',
+  groups.length ? `最強族群：${groups[0].b.name} ${pct(groups[0].agg.yoy)}；最弱：${groups.at(-1).b.name} ${pct(groups.at(-1).agg.yoy)}。` : '',
+  `每家公司中英對照、附官方來源：${cfg.siteUrl.replace(/\/$/, '')}/zh/reports/${period}/`,
+].filter(Boolean).join('\n');
+fs.writeFileSync(path.join(outDir, 'latest-caption-zh.txt'), captionZh + '\n');
+setLang('en');
 console.log(`Share images for ${period}: ${Object.keys(images).join(', ')} -> ${outDir}`);

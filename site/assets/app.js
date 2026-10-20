@@ -3,6 +3,10 @@
 (function () {
   'use strict';
   var build = document.documentElement.getAttribute('data-build') || '';
+  // Chinese pages live under /zh/ and show the Chinese name first.
+  var zh = (document.documentElement.lang || '').indexOf('zh') === 0;
+  var T = function (en, zhText) { return zh ? zhText : en; };
+  var companyUrl = function (code) { return (zh ? '/zh' : '') + '/company/' + encodeURIComponent(code) + '/'; };
   var indexPromise = null;
   function loadIndex() {
     if (!indexPromise) {
@@ -36,8 +40,10 @@
     rows.forEach(function (row) {
       var li = document.createElement('li');
       var a = document.createElement('a');
-      a.href = '/company/' + encodeURIComponent(row[0]) + '/';
-      a.textContent = row[1] + ' (' + row[0] + ')' + (row[2] && row[2] !== row[1] ? ' ' + row[2] : '');
+      var main = zh ? (row[2] || row[1]) : row[1];
+      var alt = zh ? row[1] : row[2];
+      a.href = companyUrl(row[0]);
+      a.textContent = main + ' (' + row[0] + ')' + (alt && alt !== main ? ' ' + alt : '');
       if (onPick) a.addEventListener('click', function (e) { e.preventDefault(); onPick(row); });
       li.appendChild(a);
       ul.appendChild(li);
@@ -80,16 +86,16 @@
     if (box) box.value = q;
     loadIndex().then(function (idx) {
       var rows = search(idx, q, 50);
-      if (rows.length === 1) { location.replace('/company/' + encodeURIComponent(rows[0][0]) + '/'); return; }
+      if (rows.length === 1) { location.replace(companyUrl(rows[0][0])); return; }
       renderResults(pageResults, rows);
-      if (!rows.length && q) { var li = document.createElement('li'); li.textContent = 'No companies match “' + q + '”.'; pageResults.appendChild(li); pageResults.hidden = false; }
+      if (!rows.length && q) { var li = document.createElement('li'); li.textContent = T('No companies match “' + q + '”.', '找不到符合「' + q + '」的公司。'); pageResults.appendChild(li); pageResults.hidden = false; }
     });
   }
 
   // Chart tooltips: every mark has a hit area with data-tip.
   var tip = document.querySelector('.tooltip');
   function showTip(target, x, y) {
-    var lines = (target.getAttribute('data-tip') || '').split('\n');
+    var lines = (target.getAttribute('aria-label') || '').split('; ');
     tip.textContent = '';
     var strong = document.createElement('strong');
     strong.textContent = lines[1] || lines[0];
@@ -130,10 +136,10 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: form.email.value, interest: form.interest ? form.interest.value : '' }),
       }).then(function (r) {
-        msg.textContent = r.ok ? 'Thanks — we will email you once when alerts launch.' : 'Sorry, that did not work. Please try again later.';
+        msg.textContent = r.ok ? T('Thanks — we will email you once when alerts launch.', '謝謝！通知上線時我們會寄一封 Email 給你。') : T('Sorry, that did not work. Please try again later.', '抱歉，送出失敗，請稍後再試。');
         if (r.ok) form.email.value = '';
       }).catch(function () {
-        msg.textContent = 'Sorry, that did not work. Please try again later.';
+        msg.textContent = T('Sorry, that did not work. Please try again later.', '抱歉，送出失敗，請稍後再試。');
       }).then(function () { btn.disabled = false; });
     });
   });

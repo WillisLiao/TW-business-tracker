@@ -4,9 +4,10 @@
 // Mark specs: columns <= 24px wide with a 2px gap, 4px rounded data end and a
 // square baseline; hairline solid gridlines; selective direct labels (latest
 // value only). Every mark has a larger transparent hit area carrying a tooltip
-// (read by assets/app.js) and every chart has a table twin on the page.
+// in its aria-label, lines separated by "; " (read by assets/app.js) and every chart has a table twin on the page.
 
 import { esc } from './format.mjs';
+import { L } from './lang.mjs';
 
 // Charts are rendered twice: a desktop version and a narrower one for phones,
 // so text stays legible instead of shrinking with the viewBox.
@@ -36,15 +37,18 @@ function niceDomain(min, max, ticks = 4) {
 }
 
 // Column with a 4px rounded data end and a square baseline end.
+// Coordinates are rounded to 0.1px: invisible on screen, and keeps pages small.
+const r1 = (n) => Math.round(n * 10) / 10;
+
 function columnPath(x, w, yBase, yEnd) {
   const up = yEnd < yBase;
   const h = Math.abs(yBase - yEnd);
   const r = Math.min(4, w / 2, h);
   if (h < 0.5) return '';
   if (up) {
-    return `M${x},${yBase}V${yEnd + r}Q${x},${yEnd} ${x + r},${yEnd}H${x + w - r}Q${x + w},${yEnd} ${x + w},${yEnd + r}V${yBase}Z`;
+    return `M${r1(x)},${r1(yBase)}V${r1(yEnd + r)}Q${r1(x)},${r1(yEnd)} ${r1(x + r)},${r1(yEnd)}H${r1(x + w - r)}Q${r1(x + w)},${r1(yEnd)} ${r1(x + w)},${r1(yEnd + r)}V${r1(yBase)}Z`;
   }
-  return `M${x},${yBase}V${yEnd - r}Q${x},${yEnd} ${x + r},${yEnd}H${x + w - r}Q${x + w},${yEnd} ${x + w},${yEnd - r}V${yBase}Z`;
+  return `M${r1(x)},${r1(yBase)}V${r1(yEnd - r)}Q${r1(x)},${r1(yEnd)} ${r1(x + r)},${r1(yEnd)}H${r1(x + w - r)}Q${r1(x + w)},${r1(yEnd)} ${r1(x + w)},${r1(yEnd - r)}V${r1(yBase)}Z`;
 }
 
 function barPath(xBase, xEnd, y, h) {
@@ -52,8 +56,8 @@ function barPath(xBase, xEnd, y, h) {
   const w = Math.abs(xEnd - xBase);
   const r = Math.min(4, h / 2, w);
   if (w < 0.5) return '';
-  if (right) return `M${xBase},${y}H${xEnd - r}Q${xEnd},${y} ${xEnd},${y + r}V${y + h - r}Q${xEnd},${y + h} ${xEnd - r},${y + h}H${xBase}Z`;
-  return `M${xBase},${y}H${xEnd + r}Q${xEnd},${y} ${xEnd},${y + r}V${y + h - r}Q${xEnd},${y + h} ${xEnd + r},${y + h}H${xBase}Z`;
+  if (right) return `M${r1(xBase)},${r1(y)}H${r1(xEnd - r)}Q${r1(xEnd)},${r1(y)} ${r1(xEnd)},${r1(y + r)}V${r1(y + h - r)}Q${r1(xEnd)},${r1(y + h)} ${r1(xEnd - r)},${r1(y + h)}H${r1(xBase)}Z`;
+  return `M${r1(xBase)},${r1(y)}H${r1(xEnd + r)}Q${r1(xEnd)},${r1(y)} ${r1(xEnd)},${r1(y + r)}V${r1(y + h - r)}Q${r1(xEnd)},${r1(y + h)} ${r1(xEnd + r)},${r1(y + h)}H${r1(xBase)}Z`;
 }
 
 /**
@@ -73,7 +77,7 @@ function columnChartAt(points, opts) {
   const plotW = W - m.left - m.right;
   const plotH = height - m.top - m.bottom;
   const values = points.map((p) => p.value).filter((v) => v != null);
-  if (!values.length) return '<p class="muted">Not enough data for this chart yet.</p>';
+  if (!values.length) return `<p class="muted">${L('Not enough data for this chart yet.', '資料還不夠，暫時無法顯示圖表。')}</p>`;
   const dom = niceDomain(Math.min(...values), Math.max(...values));
   const y = (v) => m.top + plotH - ((v - dom.min) / (dom.max - dom.min)) * plotH;
   const band = plotW / points.length;
@@ -91,7 +95,7 @@ function columnChartAt(points, opts) {
       const cls = diverging ? (p.value >= 0 ? 'pos' : 'neg') : (p.highlight ? 'series-1' : 'series-1 dim');
       bars += `<path class="mark ${cls}" d="${columnPath(x, bw, y0, y(p.value))}"/>`;
     }
-    hits += `<rect class="hit" x="${(m.left + i * band).toFixed(1)}" y="${m.top}" width="${band.toFixed(1)}" height="${plotH}" tabindex="0" aria-label="${esc(p.tip.replace(/\n/g, ', '))}" data-tip="${esc(p.tip)}"/>`;
+    hits += `<rect class="hit" x="${(m.left + i * band).toFixed(1)}" y="${m.top}" width="${band.toFixed(1)}" height="${plotH}" tabindex="0" aria-label="${esc(p.tip.replace(/\n/g, '; '))}"/>`;
     if (p.xLabel) xLabels += `<text class="tick" x="${(m.left + i * band + band / 2).toFixed(1)}" y="${height - 8}" text-anchor="middle">${esc(p.xLabel)}</text>`;
   });
 
@@ -129,7 +133,7 @@ function divergingBarsAt(rows, opts) {
   const m = { top: 8, right: valueW, bottom: 8, left: labelW };
   const height = m.top + m.bottom + rows.length * rowH;
   const vals = rows.map((r) => r.value).filter((v) => v != null);
-  if (!vals.length) return '<p class="muted">No members have reported for this month yet.</p>';
+  if (!vals.length) return `<p class="muted">${L('No members have reported for this month yet.', '本月尚無成員公布營收。')}</p>`;
   const lo = Math.min(0, ...vals);
   const hi = Math.max(0, ...vals);
   const span = hi - lo || 1;
@@ -145,7 +149,7 @@ function divergingBarsAt(rows, opts) {
     const name = r.href ? `<a href="${esc(r.href)}"><text class="row-label" x="${labelW - 10}" y="${yMid + 4}" text-anchor="end">${esc(r.label)}</text></a>` : `<text class="row-label" x="${labelW - 10}" y="${yMid + 4}" text-anchor="end">${esc(r.label)}</text>`;
     out += name;
     if (r.value == null) {
-      out += `<text class="tick" x="${(x0 + 6).toFixed(1)}" y="${yMid + 4}">not yet reported</text>`;
+      out += `<text class="tick" x="${(x0 + 6).toFixed(1)}" y="${yMid + 4}">${L('not yet reported', '尚未公布')}</text>`;
     } else {
       const xe = x(r.value);
       out += `<path class="mark ${r.value >= 0 ? 'pos' : 'neg'}" d="${barPath(x0, xe, yMid - 8, 16)}"/>`;
@@ -153,7 +157,7 @@ function divergingBarsAt(rows, opts) {
       out += `<text class="value-label" x="${tx.toFixed(1)}" y="${yMid + 4}" text-anchor="${r.value >= 0 ? 'start' : 'end'}">${esc(format(r.value))}</text>`;
     }
     // The hover area covers the bar side only, so the company-name link stays clickable.
-    out += `<rect class="hit" x="${labelW}" y="${yTop}" width="${W - labelW}" height="${rowH}" tabindex="0" aria-label="${esc(r.tip.replace(/\n/g, ', '))}" data-tip="${esc(r.tip)}"/>`;
+    out += `<rect class="hit" x="${labelW}" y="${yTop}" width="${W - labelW}" height="${rowH}" tabindex="0" aria-label="${esc(r.tip.replace(/\n/g, '; '))}"/>`;
   });
   return `<svg class="chart" viewBox="0 0 ${W} ${height}" role="img" aria-label="${esc(title)}">${out}</svg>`;
 }
@@ -175,5 +179,5 @@ export function heatLegend() {
     ['heat-0', '0'],
     ['heat-p1', ''], ['heat-p2', ''], ['heat-p3', ''], ['heat-p4', ''], ['heat-p5', '≥+60%'],
   ];
-  return `<div class="heat-legend" aria-label="Colour scale: red is a decline, blue is growth versus the same month last year">${cells.map(([c, l]) => `<span class="${c}">${l}</span>`).join('')}</div>`;
+  return `<div class="heat-legend" aria-label="${L('Colour scale: red is a decline, blue is growth versus the same month last year', '色階：紅色為衰退，藍色為成長（與去年同月相比）')}">${cells.map(([c, l]) => `<span class="${c}">${l}</span>`).join('')}</div>`;
 }

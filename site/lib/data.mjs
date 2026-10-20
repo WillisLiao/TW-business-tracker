@@ -8,11 +8,13 @@ import { listPeriods, readPeriod, readJson } from '../../pipeline/lib/store.mjs'
 import { addMonths } from '../../pipeline/lib/period.mjs';
 import { slugify } from './format.mjs';
 import { loadSiteConfig } from './config.mjs';
+import { isZh } from './lang.mjs';
 
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), '../..');
 const loadConfig = (f) => JSON.parse(fs.readFileSync(path.join(root, f), 'utf8'));
 
-export const MARKET_LABEL = { TWSE: 'Listed (TWSE)', TPEx: 'OTC (TPEx)' };
+const MARKETS = { TWSE: ['Listed (TWSE)', '上市'], TPEx: ['OTC (TPEx)', '上櫃'] };
+export const marketLabel = (m) => (MARKETS[m] ? MARKETS[m][isZh() ? 1 : 0] : m);
 
 const ratio = (a, b) => (a != null && b != null && b > 0 ? a / b - 1 : null);
 
@@ -27,11 +29,21 @@ export function loadDataset(dataDir, { siteConfig = loadSiteConfig() } = {}) {
   const basketName = new Map();
   for (const b of baskets) for (const m of b.members) if (!basketName.has(m.code)) basketName.set(m.code, m.name);
 
-  const industryEn = (raw) => {
-    if (!raw) return 'Other';
-    const zh = industries.codes[raw] || industries.codes[raw.padStart?.(2, '0')] || raw;
-    return industries.names[zh] || zh;
-  };
+  const industryZhName = (raw) => (raw ? industries.codes[raw] || industries.codes[raw.padStart?.(2, '0')] || raw : '其他');
+  const industryEn = (raw) => (raw ? industries.names[industryZhName(raw)] || industryZhName(raw) : 'Other');
+
+  // Group names, blurbs and roles follow the page language (see config/baskets.json).
+  for (const b of baskets) {
+    const { name, blurb } = b;
+    Object.defineProperty(b, 'name', { get: () => (isZh() && b.nameZh) || name, enumerable: true });
+    Object.defineProperty(b, 'blurb', { get: () => (isZh() && b.blurbZh) || blurb, enumerable: true });
+    for (const m of b.members) {
+      const { role } = m;
+      const nameEnOverride = m.name;
+      Object.defineProperty(m, 'role', { get: () => (isZh() && m.roleZh) || role, enumerable: true });
+      Object.defineProperty(m, 'name', { get: () => (isZh() && companies.get(m.code)?.nameZh) || nameEnOverride, enumerable: true });
+    }
+  }
 
   // Company directory: every code that appears in any period or profile.
   const codes = new Set(Object.keys(profiles));
@@ -42,14 +54,19 @@ export function loadDataset(dataDir, { siteConfig = loadSiteConfig() } = {}) {
     let market = pr.market;
     if (!market) for (const p of [...periods].reverse()) { if (byPeriod.get(p)[code]) { market = byPeriod.get(p)[code].market; break; } }
     const nameEn = basketName.get(code) || pr.nameEn || pr.fullNameEn || '';
+    const nameZh = pr.nameZh || '';
+    const indEn = industryEn(pr.industry);
+    const indZh = industryZhName(pr.industry);
     companies.set(code, {
       code,
       market: market || 'TWSE',
-      nameZh: pr.nameZh || '',
+      nameZh,
       nameEn,
-      display: nameEn || pr.nameZh || code,
-      industry: industryEn(pr.industry),
-      industrySlug: slugify(industryEn(pr.industry)),
+      // Main name in the page language; the other language is shown beside it.
+      get display() { return isZh() ? nameZh || nameEn || code : nameEn || nameZh || code; },
+      get altName() { return isZh() ? nameEn : nameZh; },
+      get industry() { return isZh() ? indZh : indEn; },
+      industrySlug: slugify(indEn),
       website: pr.website || '',
       baskets: baskets.filter((b) => b.members.some((m) => m.code === code)).map((b) => b.slug),
     });

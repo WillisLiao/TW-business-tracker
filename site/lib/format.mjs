@@ -1,9 +1,24 @@
 // Number and text formatting. Amounts arrive in thousand NT$.
+// Chinese pages use Taiwan's conventions: 萬/億/兆 units and 2026年9月-style dates.
+
+import { isZh } from './lang.mjs';
 
 const MINUS = '−';
+const group = (n, d) => n.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
+
+// 5,118.6億元, 1.16兆元, 5,904萬元.
+function ntdZh(v, digits) {
+  const a = Math.abs(v);
+  const sign = v < 0 ? MINUS : '';
+  if (a >= 1e12) return `${sign}${group(a / 1e12, digits ?? 2)}兆元`;
+  if (a >= 1e8) return `${sign}${group(a / 1e8, digits ?? 1)}億元`;
+  if (a >= 1e4) return `${sign}${group(a / 1e4, digits ?? 0)}萬元`;
+  return `${sign}${group(a, 0)}元`;
+}
 
 export function ntd(thousand, { digits } = {}) {
   if (thousand == null) return '—';
+  if (isZh()) return ntdZh(thousand * 1000, digits);
   const v = thousand * 1000;
   const a = Math.abs(v);
   const sign = v < 0 ? MINUS : '';
@@ -17,6 +32,13 @@ export function ntd(thousand, { digits } = {}) {
 export function compact(thousand) {
   const v = thousand * 1000;
   const a = Math.abs(v);
+  if (isZh()) {
+    const sign = v < 0 ? MINUS : '';
+    if (a >= 1e12) return `${sign}${group(a / 1e12, a % 1e12 ? 1 : 0)}兆`;
+    if (a >= 1e8) return `${sign}${group(a / 1e8, 0)}億`;
+    if (a >= 1e4) return `${sign}${group(a / 1e4, 0)}萬`;
+    return `${sign}${group(a, 0)}`;
+  }
   const [s, d] = a >= 1e12 ? ['T', 1e12] : a >= 1e9 ? ['B', 1e9] : a >= 1e6 ? ['M', 1e6] : a >= 1e3 ? ['K', 1e3] : ['', 1];
   const n = a / d;
   const txt = (n >= 10 || Number.isInteger(n) ? n.toFixed(0) : n.toFixed(1)).replace(/\.0$/, '');
@@ -39,14 +61,26 @@ export function int(n) {
 
 const TPE = { timeZone: 'Asia/Taipei' };
 
+// Taiwan has no daylight saving time, so Taipei time is always UTC+8.
+const taipei = (iso) => new Date(Date.parse(iso) + 8 * 3600 * 1000);
+const pad = (n) => String(n).padStart(2, '0');
+
 export function dateTime(iso) {
   if (!iso) return '—';
+  if (isZh()) {
+    const t = taipei(iso);
+    return `${t.getUTCFullYear()}年${t.getUTCMonth() + 1}月${t.getUTCDate()}日 ${pad(t.getUTCHours())}:${pad(t.getUTCMinutes())}（台北時間）`;
+  }
   const d = new Date(iso);
   return `${d.toLocaleDateString('en-GB', { ...TPE, day: 'numeric', month: 'short', year: 'numeric' })}, ${d.toLocaleTimeString('en-GB', { ...TPE, hour: '2-digit', minute: '2-digit' })} Taipei`;
 }
 
 export function date(iso) {
   if (!iso) return '—';
+  if (isZh()) {
+    const t = taipei(iso);
+    return `${t.getUTCFullYear()}年${t.getUTCMonth() + 1}月${t.getUTCDate()}日`;
+  }
   return new Date(iso).toLocaleDateString('en-GB', { ...TPE, day: 'numeric', month: 'short', year: 'numeric' });
 }
 

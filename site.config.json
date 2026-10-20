@@ -1,6 +1,8 @@
 {
   "siteName": "Taiwan Monthly",
+  "siteNameZh": "台股月營收",
   "tagline": "Every Taiwan-listed company's monthly revenue, in English.",
+  "taglineZh": "每家上市櫃公司的月營收，中英對照，附官方來源。",
   "siteUrl": "https://example.com",
   "ownerName": "",
   "contactEmail": "",

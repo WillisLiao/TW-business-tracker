@@ -9,6 +9,8 @@
   var msg = signin.querySelector('.form-msg');
   var state = null;
   var names = {};
+  var zh = (document.documentElement.lang || '').indexOf('zh') === 0;
+  var T = function (en, zhText) { return zh ? zhText : en; };
 
   function api(path, opts) {
     opts = opts || {};
@@ -23,7 +25,9 @@
   }
 
   function fmtDate(iso) {
-    return iso ? new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
+    if (!iso) return '';
+    var d = new Date(iso);
+    return zh ? d.getFullYear() + '年' + (d.getMonth() + 1) + '月' + d.getDate() + '日' : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
   }
 
   function show(data) {
@@ -34,23 +38,23 @@
     var manage = $('[data-manage]');
     manage.textContent = '';
     if (data.pro) {
-      var s = data.status === 'on_trial' ? 'Pro (free trial)' : data.status === 'cancelled' ? 'Pro (cancelled, access until ' + fmtDate(data.endsAt) + ')' : 'Pro';
-      status.textContent = 'Signed in as ' + data.email + '. Plan: ' + s + '.';
+      var s = data.status === 'on_trial' ? T('Pro (free trial)', 'Pro（免費試用中）') : data.status === 'cancelled' ? T('Pro (cancelled, access until ' + fmtDate(data.endsAt) + ')', 'Pro（已取消，可使用至' + fmtDate(data.endsAt) + '）') : 'Pro';
+      status.textContent = T('Signed in as ' + data.email + '. Plan: ' + s + '.', '已登入：' + data.email + '。方案：' + s + '。');
     } else {
-      status.textContent = 'Signed in as ' + data.email + '. You do not have an active Pro subscription.';
+      status.textContent = T('Signed in as ' + data.email + '. You do not have an active Pro subscription.', '已登入：' + data.email + '。你目前沒有有效的 Pro 訂閱。');
       var checkout = root.getAttribute('data-checkout');
       if (checkout) {
         var a = document.createElement('a');
         a.className = 'button';
         a.href = checkout + (checkout.indexOf('?') === -1 ? '?' : '&') + 'checkout[email]=' + encodeURIComponent(data.email);
-        a.textContent = 'Start free trial';
+        a.textContent = T('Start free trial', '開始免費試用');
         manage.appendChild(a);
       }
     }
     if (data.portalUrl) {
       var p = document.createElement('a');
       p.href = data.portalUrl;
-      p.textContent = 'Manage billing or cancel';
+      p.textContent = T('Manage billing or cancel', '管理付款或取消訂閱');
       p.rel = 'noopener';
       if (manage.childNodes.length) manage.appendChild(document.createTextNode(' '));
       manage.appendChild(p);
@@ -71,21 +75,21 @@
     if (!state.watchlist.length) {
       var li = document.createElement('li');
       li.className = 'muted';
-      li.textContent = 'No companies yet. Add some above.';
+      li.textContent = T('No companies yet. Add some above.', '尚未加入公司，請在上方新增。');
       ul.appendChild(li);
       return;
     }
     state.watchlist.forEach(function (code) {
       var li = document.createElement('li');
       var a = document.createElement('a');
-      a.href = '/company/' + encodeURIComponent(code) + '/';
+      a.href = (zh ? '/zh' : '') + '/company/' + encodeURIComponent(code) + '/';
       a.textContent = (names[code] || code) + ' (' + code + ')';
       var rm = document.createElement('button');
       rm.type = 'button';
       rm.className = 'button secondary';
       rm.style.cssText = 'padding:2px 8px;margin-left:8px;font-size:0.8rem';
-      rm.textContent = 'Remove';
-      rm.setAttribute('aria-label', 'Remove ' + code);
+      rm.textContent = T('Remove', '移除');
+      rm.setAttribute('aria-label', T('Remove ', '移除 ') + code);
       rm.addEventListener('click', function () { saveWatchlist(state.watchlist.filter(function (c) { return c !== code; })); });
       li.appendChild(a);
       li.appendChild(rm);
@@ -96,8 +100,8 @@
   function saveWatchlist(codes) {
     var wmsg = $('[data-watch-msg]');
     return api('/watchlist', { method: 'PUT', body: { codes: codes } }).then(function (r) {
-      if (r._status === 200) { state.watchlist = r.watchlist; renderWatchlist(); wmsg.textContent = 'Saved.'; }
-      else wmsg.textContent = r.error || 'Could not save.';
+      if (r._status === 200) { state.watchlist = r.watchlist; renderWatchlist(); wmsg.textContent = T('Saved.', '已儲存。'); }
+      else wmsg.textContent = r.error || T('Could not save.', '無法儲存。');
     });
   }
 
@@ -114,24 +118,24 @@
   signinForm.addEventListener('submit', function (e) {
     e.preventDefault();
     email = signinForm.email.value.trim();
-    msg.textContent = 'Sending…';
+    msg.textContent = T('Sending…', '寄送中…');
     api('/auth/start', { method: 'POST', body: { email: email } }).then(function (r) {
-      if (r._status === 200) { msg.textContent = 'Check your inbox for a 6-digit code.'; verifyForm.hidden = false; verifyForm.code.focus(); }
-      else msg.textContent = r.error || 'Could not send a code.';
+      if (r._status === 200) { msg.textContent = T('Check your inbox for a 6-digit code.', '請到信箱查看6位數驗證碼。'); verifyForm.hidden = false; verifyForm.code.focus(); }
+      else msg.textContent = r.error || T('Could not send a code.', '無法寄送驗證碼。');
     });
   });
   verifyForm.addEventListener('submit', function (e) {
     e.preventDefault();
     api('/auth/verify', { method: 'POST', body: { email: email, code: verifyForm.code.value.trim() } }).then(function (r) {
       if (r._status === 200) { msg.textContent = ''; load(); }
-      else msg.textContent = r.error || 'Sign-in failed.';
+      else msg.textContent = r.error || T('Sign-in failed.', '登入失敗。');
     });
   });
   $('[data-signout]').addEventListener('click', function () {
     api('/auth/signout', { method: 'POST', body: {} }).then(function () { location.reload(); });
   });
   $('[data-alerts]').addEventListener('change', function (e) {
-    api('/settings', { method: 'PUT', body: { alertsEnabled: e.target.checked } }).then(function () { $('[data-watch-msg]').textContent = 'Saved.'; });
+    api('/settings', { method: 'PUT', body: { alertsEnabled: e.target.checked } }).then(function () { $('[data-watch-msg]').textContent = T('Saved.', '已儲存。'); });
   });
 
   // Watchlist add box with the shared company search.
@@ -144,7 +148,7 @@
     addResults.hidden = true;
     var max = Number(root.getAttribute('data-max')) || 50;
     if (state.watchlist.indexOf(row[0]) !== -1) return;
-    if (state.watchlist.length >= max) { $('[data-watch-msg]').textContent = 'Your watchlist is full (' + max + ' companies).'; return; }
+    if (state.watchlist.length >= max) { $('[data-watch-msg]').textContent = T('Your watchlist is full (' + max + ' companies).', '追蹤清單已滿（' + max + '家公司）。'); return; }
     saveWatchlist(state.watchlist.concat([row[0]]));
   }
   addInput.addEventListener('input', function () {

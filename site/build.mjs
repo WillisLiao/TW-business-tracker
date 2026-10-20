@@ -8,6 +8,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { loadDataset } from './lib/data.mjs';
 import { loadSiteConfig } from './lib/config.mjs';
+import { LANGS, setLang } from './lib/lang.mjs';
 import { toCsv } from './lib/csv.mjs';
 import { homePage } from './pages/home.mjs';
 import { companyPage } from './pages/company.mjs';
@@ -54,32 +55,38 @@ function write(urlPath, html, { inSitemap = true } = {}) {
   if (inSitemap && urlPath.endsWith('/')) sitemap.push(urlPath);
 }
 
-write('/', homePage(ctx));
-for (const code of ds.series.keys()) write(`/company/${encodeURIComponent(code)}/`, companyPage(ctx, code));
-if (ds.latestPeriod) {
-  write('/groups/', groupsIndex(ctx));
-  for (const b of ds.baskets) write(`/groups/${b.slug}/`, basketPage(ctx, b));
-  for (const ind of ds.industriesIndex()) write(`/industries/${ind.slug}/`, industryPage(ctx, ind));
-  write('/reporting/', reportingPage(ctx));
-  write('/reports/', reportsIndex(ctx));
-  for (const p of ds.periods) write(`/reports/${p}/`, monthlyReport(ctx, p));
+// Every page is rendered once per language: English at /, Chinese at /zh/.
+for (const lang of LANGS) {
+  setLang(lang);
+  const at = (p) => (lang === 'zh' ? `/zh${p}` : p);
+  write(at('/'), homePage(ctx));
+  for (const code of ds.series.keys()) write(at(`/company/${encodeURIComponent(code)}/`), companyPage(ctx, code));
+  if (ds.latestPeriod) {
+    write(at('/groups/'), groupsIndex(ctx));
+    for (const b of ds.baskets) write(at(`/groups/${b.slug}/`), basketPage(ctx, b));
+    for (const ind of ds.industriesIndex()) write(at(`/industries/${ind.slug}/`), industryPage(ctx, ind));
+    write(at('/reporting/'), reportingPage(ctx));
+    write(at('/reports/'), reportsIndex(ctx));
+    for (const p of ds.periods) write(at(`/reports/${p}/`), monthlyReport(ctx, p));
+  }
+  write(at('/companies/'), companiesDirectory(ctx));
+  write(at('/methodology/'), methodologyPage(ctx));
+  write(at('/sources/'), sourcesPage(ctx));
+  write(at('/about/'), aboutPage(ctx));
+  write(at('/pricing/'), pricingPage(ctx));
+  write(at('/privacy/'), privacyPage(ctx));
+  write(at('/terms/'), termsPage(ctx));
+  write(at('/account/'), accountPage(ctx), { inSitemap: false });
+  write(at('/search/'), searchPage(ctx), { inSitemap: false });
 }
-write('/companies/', companiesDirectory(ctx));
-write('/methodology/', methodologyPage(ctx));
-write('/sources/', sourcesPage(ctx));
-write('/about/', aboutPage(ctx));
-write('/pricing/', pricingPage(ctx));
-write('/privacy/', privacyPage(ctx));
-write('/terms/', termsPage(ctx));
-write('/account/', accountPage(ctx), { inSitemap: false });
-write('/search/', searchPage(ctx), { inSitemap: false });
+setLang('en');
 write('/404.html', notFoundPage(ctx));
 
 // Assets.
 fs.cpSync(path.join(root, 'site/assets'), path.join(outDir, 'assets'), { recursive: true });
 
-// Search index: code, English name, Chinese name.
-const index = [...ds.companies.values()].filter((c) => ds.series.has(c.code)).map((c) => [c.code, c.display, c.nameZh]);
+// Search index: code, English name, Chinese name (shared by both languages).
+const index = [...ds.companies.values()].filter((c) => ds.series.has(c.code)).map((c) => [c.code, c.nameEn || c.nameZh || c.code, c.nameZh]);
 fs.writeFileSync(path.join(outDir, 'assets/search-index.json'), JSON.stringify(index));
 
 // Free download: the latest month.
