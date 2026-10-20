@@ -1,0 +1,93 @@
+name: Update data and deploy
+
+# Every 2 hours on days 1-15 (the reporting window), daily otherwise, and on
+# every push of code changes. Times are UTC.
+on:
+  schedule:
+    - cron: '17 */2 1-15 * *'
+    - cron: '17 1 16-31 * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths-ignore: ['data/**', '**.md']
+
+concurrency:
+  group: update
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      # Exit code 1 = nothing publishable (job fails, GitHub emails you).
+      # Exit code 3 = one market failed checks; the healthy one is still published
+      # and the job is marked failed at the end so you are told.
+      - name: Fetch and check official data
+        id: fetch
+        if: github.event_name != 'push'
+        run: |
+          set +e
+          node pipeline/update.mjs
+          code=$?
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+          if [ "$code" = "1" ]; then exit 1; fi
+          exit 0
+
+      - name: Build site, share images and downloads
+        run: |
+          node site/build.mjs
+          node share/make-share.mjs
+          node pipeline/export.mjs
+
+      - name: Deploy to Cloudflare
+        if: env.CLOUDFLARE_API_TOKEN != ''
+        run: |
+          read D1_ID KV_ID <<< "$(node scripts/cf-ids.mjs)"
+          node scripts/write-wrangler-config.mjs "$D1_ID" "$KV_ID"
+          npx wrangler pages deploy dist --project-name taiwan-monthly --branch main --commit-dirty=true
+          npx wrangler kv key put full.csv.gz --path out/exports/full.csv.gz --namespace-id "$KV_ID" --remote
+
+      - name: Send alert emails
+        if: env.CLOUDFLARE_API_TOKEN != '' && github.event_name != 'push'
+        env:
+          NOTIFY_SECRET: ${{ secrets.NOTIFY_SECRET }}
+        run: |
+          export SITE_URL="$(node -p "require('./site.config.json').siteUrl")"
+          node pipeline/notify.mjs
+
+      # Always keep fetched data, even if a later step failed.
+      - name: Commit data
+        if: always() && github.event_name != 'push' && steps.fetch.outcome == 'success'
+        run: |
+          git config user.name "data-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data
+          if git diff --cached --quiet; then echo "No data changes."; exit 0; fi
+          git commit -m "Data update $(date -u +%Y-%m-%dT%H:%MZ)"
+          git pull --rebase origin main
+          git push origin HEAD:main
+
+      - name: Flag partial failure
+        if: steps.fetch.outputs.code == '3'
+        run: |
+          echo "::error::One market failed its checks and was not published. See the run summary for details."
+          exit 1

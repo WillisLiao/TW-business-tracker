@@ -1,0 +1,8 @@
+node_modules/
+dist/
+out/
+.wrangler/
+test/sample-data/
+.dev.vars
+wrangler.toml
+*.zip

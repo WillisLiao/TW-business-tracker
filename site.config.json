@@ -1,0 +1,18 @@
+{
+  "siteName": "Taiwan Monthly",
+  "tagline": "Every Taiwan-listed company's monthly revenue, in English.",
+  "siteUrl": "https://example.com",
+  "ownerName": "",
+  "contactEmail": "",
+  "pro": {
+    "enabled": false,
+    "monthlyPriceUsd": 12,
+    "yearlyPriceUsd": 99,
+    "trialDays": 7,
+    "checkoutUrlMonthly": "",
+    "checkoutUrlYearly": "",
+    "maxWatchlist": 50
+  },
+  "minRevenueForMoversThousandNtd": 1000000,
+  "minRevenueForRecordsThousandNtd": 500000
+}
