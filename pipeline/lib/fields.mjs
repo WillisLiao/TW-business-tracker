@@ -156,7 +156,8 @@ const PROFILE_FIELDS = {
   fullNameZh: { required: false, aliases: ['公司名稱', 'CompanyName'] },
   nameEn: {
     required: false,
-    aliases: ['英文簡稱', 'EnglishAbbreviation', 'CompanyEnglishAbbreviation', 'EnglishShortName', 'AbbreviationOfEnglishName'],
+    // TPEx calls its English short name "Symbol" (same position as TWSE's 英文簡稱).
+    aliases: ['英文簡稱', 'EnglishAbbreviation', 'CompanyEnglishAbbreviation', 'EnglishShortName', 'AbbreviationOfEnglishName', 'Symbol'],
     test: (k) => (k.includes('英文') && k.includes('簡稱')) || (k.includes('english') && /abbrev|short/.test(k)),
   },
   fullNameEn: {
@@ -182,7 +183,8 @@ export function normaliseProfileRows(rows, market) {
       code,
       market,
       nameZh: get('nameZh') || get('fullNameZh'),
-      nameEn: get('nameEn'),
+      // Only accept text that looks like a name, never a bare ticker number.
+      nameEn: /[A-Za-z]/.test(get('nameEn')) ? get('nameEn') : '',
       fullNameEn: get('fullNameEn'),
       industry: get('industry'),
       website: get('website'),

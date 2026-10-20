@@ -7,6 +7,11 @@ on:
     - cron: '17 */2 1-15 * *'
     - cron: '17 1 16-31 * *'
   workflow_dispatch:
+    inputs:
+      refresh_profiles:
+        description: Re-download company names and industries first
+        type: boolean
+        default: false
   push:
     branches: [main]
     paths-ignore: ['data/**', '**.md']
@@ -37,6 +42,10 @@ jobs:
 
       - name: Run tests
         run: npm test
+
+      - name: Refresh company profiles
+        if: github.event_name == 'workflow_dispatch' && inputs.refresh_profiles
+        run: node pipeline/profiles.mjs
 
       # Exit code 1 = nothing publishable (job fails, GitHub emails you).
       # Exit code 3 = one market failed checks; the healthy one is still published

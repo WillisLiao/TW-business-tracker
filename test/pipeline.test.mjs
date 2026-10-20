@@ -136,6 +136,18 @@ test('profile rows pick up English names', () => {
   assert.equal(records[0].industry, '24');
 });
 
+test('TPEx profile rows (real field names) pick up the English name from Symbol', () => {
+  const rows = [
+    { Date: '1151020', SecuritiesCompanyCode: '5347', CompanyName: '世界先進積體電路股份有限公司', CompanyAbbreviation: '世界', SecuritiesIndustryCode: '24', Symbol: 'VIS', WebAddress: 'www.vis.com.tw' },
+    { Date: '1151020', SecuritiesCompanyCode: '9999', CompanyName: '測試', CompanyAbbreviation: '測試', SecuritiesIndustryCode: '20', Symbol: '9999', WebAddress: '' },
+  ];
+  const { records } = normaliseProfileRows(rows, 'TPEx');
+  assert.equal(records[0].nameEn, 'VIS');
+  assert.equal(records[0].nameZh, '世界');
+  assert.equal(records[0].industry, '24');
+  assert.equal(records[1].nameEn, '', 'a numeric value is never used as a name');
+});
+
 test('update.mjs end-to-end on fixtures', () => {
   const dir = tmp();
   const out = tmp();
