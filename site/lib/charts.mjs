@@ -152,7 +152,8 @@ function divergingBarsAt(rows, opts) {
       const tx = r.value >= 0 ? xe + 6 : xe - 6;
       out += `<text class="value-label" x="${tx.toFixed(1)}" y="${yMid + 4}" text-anchor="${r.value >= 0 ? 'start' : 'end'}">${esc(format(r.value))}</text>`;
     }
-    out += `<rect class="hit" x="0" y="${yTop}" width="${W}" height="${rowH}" tabindex="0" aria-label="${esc(r.tip.replace(/\n/g, ', '))}" data-tip="${esc(r.tip)}"/>`;
+    // The hover area covers the bar side only, so the company-name link stays clickable.
+    out += `<rect class="hit" x="${labelW}" y="${yTop}" width="${W - labelW}" height="${rowH}" tabindex="0" aria-label="${esc(r.tip.replace(/\n/g, ', '))}" data-tip="${esc(r.tip)}"/>`;
   });
   return `<svg class="chart" viewBox="0 0 ${W} ${height}" role="img" aria-label="${esc(title)}">${out}</svg>`;
 }
