@@ -1,0 +1,56 @@
+name: Set up Cloudflare (run once)
+
+# Creates the database, download storage and Pages project, applies the database
+# schema, and copies your secrets to Cloudflare. Safe to run again: anything that
+# already exists is left alone, and secrets are updated.
+on:
+  workflow_dispatch:
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+
+      - name: Check secrets
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "::error::Add CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID as repository secrets first (see SETUP-GUIDE.md)."
+            exit 1
+          fi
+
+      - name: Create resources
+        run: |
+          npx wrangler d1 create taiwan-monthly || echo "D1 database already exists"
+          npx wrangler kv namespace create taiwan-monthly-exports || echo "KV namespace already exists"
+          npx wrangler pages project create taiwan-monthly --production-branch main || echo "Pages project already exists"
+
+      - name: Apply database schema
+        run: |
+          read D1_ID KV_ID <<< "$(node scripts/cf-ids.mjs)"
+          node scripts/write-wrangler-config.mjs "$D1_ID" "$KV_ID"
+          npx wrangler d1 execute taiwan-monthly --remote --file schema.sql
+
+      - name: Copy secrets to Cloudflare
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+          LEMON_SQUEEZY_WEBHOOK_SECRET: ${{ secrets.LEMON_SQUEEZY_WEBHOOK_SECRET }}
+          NOTIFY_SECRET: ${{ secrets.NOTIFY_SECRET }}
+        run: |
+          for name in RESEND_API_KEY EMAIL_FROM LEMON_SQUEEZY_WEBHOOK_SECRET NOTIFY_SECRET; do
+            value="${!name}"
+            if [ -n "$value" ]; then
+              printf '%s' "$value" | npx wrangler pages secret put "$name" --project-name taiwan-monthly
+            else
+              echo "::warning::$name is not set yet; add it later and re-run this workflow."
+            fi
+          done

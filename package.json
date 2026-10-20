@@ -1,0 +1,28 @@
+{
+  "name": "taiwan-revenue-tracker",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "English tracker of Taiwan-listed companies' monthly revenue, built from official open data.",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "update": "node pipeline/update.mjs",
+    "profiles": "node pipeline/profiles.mjs",
+    "backfill": "node pipeline/backfill.mjs",
+    "notify": "node pipeline/notify.mjs",
+    "export": "node pipeline/export.mjs",
+    "build": "node site/build.mjs",
+    "build:sample": "node test/make-sample-data.mjs && node site/build.mjs --data test/sample-data --sample",
+    "share": "node share/make-share.mjs",
+    "test": "node --test \"test/*.test.mjs\"",
+    "dev": "node scripts/write-wrangler-config.mjs && wrangler d1 execute taiwan-monthly --local --file schema.sql && wrangler pages dev dist"
+  },
+  "devDependencies": {
+    "wrangler": "4.145.0"
+  },
+  "dependencies": {
+    "@resvg/resvg-js": "2.6.2"
+  }
+}

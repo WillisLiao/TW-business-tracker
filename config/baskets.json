@@ -1,0 +1,146 @@
+{
+  "_comment": "Hand-picked supply-chain groups. Edit freely: slug is the URL, members are stock codes with an English display name and the company's role. Codes that are missing from the data are reported by the build, not silently dropped.",
+  "baskets": [
+    {
+      "slug": "ai-servers",
+      "name": "AI servers & ODMs",
+      "blurb": "Contract manufacturers that assemble AI servers and racks for Nvidia, AMD and the big cloud companies.",
+      "members": [
+        { "code": "2317", "name": "Hon Hai (Foxconn)", "role": "Server racks, iPhone assembly" },
+        { "code": "2382", "name": "Quanta Computer", "role": "AI server ODM" },
+        { "code": "3231", "name": "Wistron", "role": "AI server boards & systems" },
+        { "code": "6669", "name": "Wiwynn", "role": "Cloud & AI servers" },
+        { "code": "2356", "name": "Inventec", "role": "Servers" },
+        { "code": "2376", "name": "Gigabyte", "role": "AI servers, motherboards" },
+        { "code": "4938", "name": "Pegatron", "role": "Servers, consumer devices" },
+        { "code": "2324", "name": "Compal Electronics", "role": "Notebooks, servers" },
+        { "code": "3706", "name": "MiTAC Holdings", "role": "Servers" },
+        { "code": "2357", "name": "Asustek", "role": "PCs, AI servers" },
+        { "code": "2377", "name": "Micro-Star (MSI)", "role": "PCs, servers" }
+      ]
+    },
+    {
+      "slug": "foundry-memory",
+      "name": "Foundry & memory",
+      "blurb": "Chip manufacturing (foundry) and memory makers.",
+      "members": [
+        { "code": "2330", "name": "TSMC", "role": "Leading-edge foundry" },
+        { "code": "2303", "name": "UMC", "role": "Mature-node foundry" },
+        { "code": "5347", "name": "Vanguard (VIS)", "role": "Specialty foundry" },
+        { "code": "6770", "name": "Powerchip (PSMC)", "role": "Foundry, memory" },
+        { "code": "2344", "name": "Winbond", "role": "Specialty DRAM & flash" },
+        { "code": "2408", "name": "Nanya Technology", "role": "DRAM" },
+        { "code": "2337", "name": "Macronix", "role": "NOR & NAND flash" }
+      ]
+    },
+    {
+      "slug": "ic-design",
+      "name": "IC design",
+      "blurb": "Fabless chip designers, including custom AI chip (ASIC) design-service firms.",
+      "members": [
+        { "code": "2454", "name": "MediaTek", "role": "Smartphone & ASIC chips" },
+        { "code": "3034", "name": "Novatek", "role": "Display drivers" },
+        { "code": "2379", "name": "Realtek", "role": "Networking & audio chips" },
+        { "code": "3661", "name": "Alchip", "role": "AI ASIC design services" },
+        { "code": "3443", "name": "Global Unichip (GUC)", "role": "ASIC design services" },
+        { "code": "3035", "name": "Faraday Technology", "role": "ASIC design services" },
+        { "code": "5274", "name": "ASPEED", "role": "Server management chips" },
+        { "code": "3529", "name": "eMemory", "role": "Memory IP" }
+      ]
+    },
+    {
+      "slug": "packaging-test-equipment",
+      "name": "Packaging, test & equipment",
+      "blurb": "Advanced packaging (incl. CoWoS supply chain), chip testing and equipment suppliers.",
+      "members": [
+        { "code": "3711", "name": "ASE Technology", "role": "Packaging & test" },
+        { "code": "6239", "name": "Powertech Technology", "role": "Memory packaging" },
+        { "code": "2449", "name": "King Yuan Electronics (KYEC)", "role": "Chip testing" },
+        { "code": "3131", "name": "Grand Process Technology", "role": "Wet-process equipment" },
+        { "code": "3583", "name": "Scientech", "role": "Wet-process equipment" },
+        { "code": "6187", "name": "All Ring Tech", "role": "Packaging equipment" },
+        { "code": "6223", "name": "MPI Corp", "role": "Probe cards" },
+        { "code": "6515", "name": "WinWay Technology", "role": "Test sockets" }
+      ]
+    },
+    {
+      "slug": "cooling",
+      "name": "Thermal & cooling",
+      "blurb": "Fans, heat sinks and liquid cooling for AI servers.",
+      "members": [
+        { "code": "3017", "name": "Asia Vital Components (AVC)", "role": "Cooling modules" },
+        { "code": "3324", "name": "Auras Technology", "role": "Liquid cooling" },
+        { "code": "3653", "name": "Jentech Precision", "role": "Lids & heat spreaders" },
+        { "code": "2421", "name": "Sunonwealth", "role": "Fans" }
+      ]
+    },
+    {
+      "slug": "pcb-substrates",
+      "name": "PCB & substrates",
+      "blurb": "Circuit boards, copper-clad laminates and chip substrates.",
+      "members": [
+        { "code": "2383", "name": "Elite Material (EMC)", "role": "Copper-clad laminates" },
+        { "code": "2368", "name": "Gold Circuit Electronics", "role": "Server PCBs" },
+        { "code": "3037", "name": "Unimicron", "role": "ABF substrates, PCBs" },
+        { "code": "8046", "name": "Nan Ya PCB", "role": "ABF substrates" },
+        { "code": "3189", "name": "Kinsus", "role": "Substrates" },
+        { "code": "6274", "name": "Taiwan Union Technology", "role": "Copper-clad laminates" },
+        { "code": "3044", "name": "Tripod Technology", "role": "PCBs" }
+      ]
+    },
+    {
+      "slug": "power-electrical",
+      "name": "Power & grid",
+      "blurb": "Power supplies for data centers and grid equipment.",
+      "members": [
+        { "code": "2308", "name": "Delta Electronics", "role": "Server power, cooling" },
+        { "code": "2301", "name": "Lite-On Technology", "role": "Server power" },
+        { "code": "6409", "name": "Voltronic Power", "role": "UPS" },
+        { "code": "1519", "name": "Fortune Electric", "role": "Transformers" },
+        { "code": "1503", "name": "Shihlin Electric", "role": "Electrical equipment" },
+        { "code": "1513", "name": "Chung-Hsin Electric", "role": "Grid equipment" }
+      ]
+    },
+    {
+      "slug": "networking-optical",
+      "name": "Networking & optical",
+      "blurb": "Switches and optical components for data-center networks.",
+      "members": [
+        { "code": "2345", "name": "Accton Technology", "role": "Data-center switches" },
+        { "code": "3596", "name": "Arcadyan", "role": "Networking equipment" },
+        { "code": "4979", "name": "LuxNet", "role": "Optical components" },
+        { "code": "3081", "name": "LandMark Optoelectronics", "role": "Laser epitaxy" },
+        { "code": "3363", "name": "FOCI Fiber Optic", "role": "Optical connectivity" },
+        { "code": "6442", "name": "Ezconn", "role": "Optical components" }
+      ]
+    },
+    {
+      "slug": "components-chassis",
+      "name": "Components, rails & chassis",
+      "blurb": "Connectors, server rails, chassis, cables and passive components.",
+      "members": [
+        { "code": "3533", "name": "Lotes", "role": "CPU sockets, connectors" },
+        { "code": "2059", "name": "King Slide Works", "role": "Server rails" },
+        { "code": "8210", "name": "Chenbro Micom", "role": "Server chassis" },
+        { "code": "3665", "name": "Bizlink", "role": "Cables & harnesses" },
+        { "code": "2327", "name": "Yageo", "role": "Passive components" },
+        { "code": "2492", "name": "Walsin Technology", "role": "Passive components" }
+      ]
+    },
+    {
+      "slug": "apple-supply-chain",
+      "name": "Apple supply chain",
+      "blurb": "Taiwanese suppliers with large Apple exposure.",
+      "members": [
+        { "code": "2317", "name": "Hon Hai (Foxconn)", "role": "iPhone assembly" },
+        { "code": "4938", "name": "Pegatron", "role": "Assembly" },
+        { "code": "3008", "name": "Largan Precision", "role": "Camera lenses" },
+        { "code": "2474", "name": "Catcher Technology", "role": "Casings" },
+        { "code": "4958", "name": "Zhen Ding Technology", "role": "Flexible PCBs" },
+        { "code": "3406", "name": "Genius Electronic Optical", "role": "Camera lenses" },
+        { "code": "6269", "name": "Flexium Interconnect", "role": "Flexible PCBs" },
+        { "code": "2392", "name": "Cheng Uei Precision", "role": "Connectors, batteries" }
+      ]
+    }
+  ]
+}
