@@ -3,7 +3,7 @@
     "TWSE": {
       "consecutiveFetchFailures": 0,
       "ok": true,
-      "lastSuccessAt": "2026-10-20T03:39:06.017Z",
+      "lastSuccessAt": "2026-10-20T03:41:19.606Z",
       "newestPeriod": "2026-09",
       "rows": 1088,
       "lastError": null
@@ -11,14 +11,14 @@
     "TPEx": {
       "consecutiveFetchFailures": 0,
       "ok": true,
-      "lastSuccessAt": "2026-10-20T03:39:06.017Z",
+      "lastSuccessAt": "2026-10-20T03:41:19.606Z",
       "newestPeriod": "2026-09",
       "rows": 893,
       "lastError": null
     }
   },
-  "profilesRefreshedAt": "2026-10-20T03:39:06.017Z",
-  "lastRunAt": "2026-10-20T03:39:06.017Z",
+  "profilesRefreshedAt": "2026-10-20T03:41:19.606Z",
+  "lastRunAt": "2026-10-20T03:41:19.606Z",
   "lastChangeAt": "2026-10-20T03:39:06.017Z",
   "pendingAlerts": [
     {
@@ -7945,5 +7945,95 @@
       "period": "2026-09",
       "code": "9962"
     }
-  ]
+  ],
+  "profileFields": {
+    "TWSE": {
+      "keys": [
+        "出表日期",
+        "公司代號",
+        "公司名稱",
+        "公司簡稱",
+        "外國企業註冊地國",
+        "產業別",
+        "住址",
+        "營利事業統一編號",
+        "董事長",
+        "總經理",
+        "發言人",
+        "發言人職稱",
+        "代理發言人",
+        "總機電話",
+        "成立日期",
+        "上市日期",
+        "普通股每股面額",
+        "實收資本額",
+        "私募股數",
+        "特別股",
+        "編制財務報表類型",
+        "股票過戶機構",
+        "過戶電話",
+        "過戶地址",
+        "簽證會計師事務所",
+        "簽證會計師1",
+        "簽證會計師2",
+        "英文簡稱",
+        "英文通訊地址",
+        "傳真機號碼",
+        "電子郵件信箱",
+        "網址",
+        "已發行普通股數或TDR原股發行股數"
+      ],
+      "mapped": {
+        "code": "公司代號",
+        "nameZh": "公司簡稱",
+        "fullNameZh": "公司名稱",
+        "nameEn": "英文簡稱",
+        "industry": "產業別",
+        "website": "網址"
+      }
+    },
+    "TPEx": {
+      "keys": [
+        "Date",
+        "SecuritiesCompanyCode",
+        "CompanyName",
+        "CompanyAbbreviation",
+        "Registration",
+        "SecuritiesIndustryCode",
+        "Address",
+        "UnifiedBusinessNo.",
+        "Chairman",
+        "GeneralManager",
+        "Spokesman",
+        "TitleOfSpokesman",
+        "DeputySpokesperson",
+        "Telephone",
+        "DateOfIncorporation",
+        "DateOfListing",
+        "ParValueOfCommonStock",
+        "Paidin.Capital.NTDollars",
+        "PrivateStock.shares",
+        "PreferredStock.shares",
+        "PreparationOfFinancialReportType",
+        "StockTransferAgent",
+        "StockTransferAgentTelephone",
+        "StockTransferAgentAddress",
+        "AccountingFirm",
+        "CPA.CharteredPublicAccountant.First",
+        "CPA.CharteredPublicAccountant.Second",
+        "Symbol",
+        "Fax",
+        "EmailAddress",
+        "WebAddress",
+        "IssueShares"
+      ],
+      "mapped": {
+        "code": "SecuritiesCompanyCode",
+        "nameZh": "CompanyAbbreviation",
+        "fullNameZh": "CompanyName",
+        "industry": "SecuritiesIndustryCode",
+        "website": "WebAddress"
+      }
+    }
+  }
 }
