@@ -2413,12 +2413,12 @@
   },
   "2072": {
     "market": "TWSE",
-    "nameZh": "世紀風電",
+    "nameZh": "世紀能源",
     "nameEn": "CENE",
     "fullNameEn": "",
     "industry": "35",
     "website": "www.cwptw.com",
-    "profileUpdatedAt": "2026-10-20T03:39:10.703Z"
+    "profileUpdatedAt": "2026-10-26T06:17:48.817Z"
   },
   "2073": {
     "market": "TPEx",
@@ -2707,6 +2707,15 @@
     "industry": "12",
     "website": "http://hs-elan.tw/",
     "profileUpdatedAt": "2026-10-20T03:39:10.703Z"
+  },
+  "2249": {
+    "market": "TPEx",
+    "nameZh": "湧盛",
+    "nameEn": "YOUNG SHINE",
+    "fullNameEn": "",
+    "industry": "05",
+    "website": "https://www.young-shine.com.tw/",
+    "profileUpdatedAt": "2026-10-26T06:17:50.082Z"
   },
   "2250": {
     "market": "TWSE",
@@ -12923,6 +12932,15 @@
     "website": "http://www.atrack.com.tw",
     "profileUpdatedAt": "2026-10-20T03:43:46.784Z"
   },
+  "6467": {
+    "market": "TWSE",
+    "nameZh": "泰合",
+    "nameEn": "TAHO Pharma",
+    "fullNameEn": "",
+    "industry": "22",
+    "website": "www.tahopharma.com",
+    "profileUpdatedAt": "2026-10-26T06:17:48.817Z"
+  },
   "6469": {
     "market": "TPEx",
     "nameZh": "大樹",
@@ -17564,8 +17582,8 @@
     "nameEn": "TAIWAN SECOM",
     "fullNameEn": "",
     "industry": "20",
-    "website": "WWW.SECOM.COM.TW",
-    "profileUpdatedAt": "2026-10-20T03:39:10.703Z"
+    "website": "www.secom.com.tw",
+    "profileUpdatedAt": "2026-10-26T06:17:48.817Z"
   },
   "9918": {
     "market": "TWSE",
