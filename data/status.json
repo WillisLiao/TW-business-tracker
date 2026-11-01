@@ -3,7 +3,7 @@
     "TWSE": {
       "consecutiveFetchFailures": 0,
       "ok": true,
-      "lastSuccessAt": "2026-11-01T15:15:59.363Z",
+      "lastSuccessAt": "2026-11-01T20:34:21.855Z",
       "newestPeriod": "2026-09",
       "rows": 1088,
       "lastError": null
@@ -11,14 +11,14 @@
     "TPEx": {
       "consecutiveFetchFailures": 0,
       "ok": true,
-      "lastSuccessAt": "2026-11-01T15:15:59.363Z",
+      "lastSuccessAt": "2026-11-01T20:34:21.855Z",
       "newestPeriod": "2026-09",
       "rows": 893,
       "lastError": null
     }
   },
   "profilesRefreshedAt": "2026-11-01T06:19:12.070Z",
-  "lastRunAt": "2026-11-01T15:15:59.363Z",
+  "lastRunAt": "2026-11-01T20:34:21.855Z",
   "lastChangeAt": "2026-10-20T03:39:06.017Z",
   "pendingAlerts": [
     {
