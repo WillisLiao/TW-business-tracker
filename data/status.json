@@ -3,23 +3,23 @@
     "TWSE": {
       "consecutiveFetchFailures": 0,
       "ok": true,
-      "lastSuccessAt": "2026-11-02T20:24:07.073Z",
+      "lastSuccessAt": "2026-11-03T03:29:30.729Z",
       "newestPeriod": "2026-09",
       "rows": 1088,
       "lastError": null
     },
     "TPEx": {
-      "consecutiveFetchFailures": 1,
+      "consecutiveFetchFailures": 0,
       "ok": true,
-      "lastSuccessAt": "2026-11-02T09:37:09.121Z",
+      "lastSuccessAt": "2026-11-03T03:29:30.729Z",
       "newestPeriod": "2026-09",
       "rows": 893,
-      "lastError": "HTTP 403 for https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap05_O",
+      "lastError": null,
       "lastErrorAt": "2026-11-02T20:24:07.073Z"
     }
   },
   "profilesRefreshedAt": "2026-11-01T06:19:12.070Z",
-  "lastRunAt": "2026-11-02T20:24:07.073Z",
+  "lastRunAt": "2026-11-03T03:29:30.729Z",
   "lastChangeAt": "2026-10-20T03:39:06.017Z",
   "pendingAlerts": [
     {
