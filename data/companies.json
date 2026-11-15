@@ -7520,8 +7520,8 @@
     "nameEn": "HEP",
     "fullNameEn": "",
     "industry": "28",
-    "website": "http://www.31hep.com",
-    "profileUpdatedAt": "2026-10-20T03:43:46.784Z"
+    "website": "https://31hep.ai/",
+    "profileUpdatedAt": "2026-11-15T09:34:04.173Z"
   },
   "3611": {
     "market": "TPEx",
@@ -10415,11 +10415,11 @@
   "5321": {
     "market": "TPEx",
     "nameZh": "美而快",
-    "nameEn": "U.R.",
+    "nameEn": "V-COLOR CORP.",
     "fullNameEn": "",
     "industry": "36",
     "website": "https://www.unitedrecommend.com/",
-    "profileUpdatedAt": "2026-10-20T03:43:46.784Z"
+    "profileUpdatedAt": "2026-11-15T09:34:04.173Z"
   },
   "5324": {
     "market": "TPEx",
@@ -15955,6 +15955,15 @@
     "industry": "35",
     "website": "https://greenet.com.tw/",
     "profileUpdatedAt": "2026-10-20T03:43:46.784Z"
+  },
+  "7848": {
+    "market": "TPEx",
+    "nameZh": "騏億鑫",
+    "nameEn": "",
+    "fullNameEn": "",
+    "industry": "其他電子業",
+    "website": "",
+    "profileUpdatedAt": "2026-11-15T09:33:57.313Z"
   },
   "7855": {
     "market": "TWSE",
