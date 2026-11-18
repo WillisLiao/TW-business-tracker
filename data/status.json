@@ -3,15 +3,15 @@
     "TWSE": {
       "consecutiveFetchFailures": 0,
       "ok": true,
-      "lastSuccessAt": "2026-11-17T09:14:38.983Z",
+      "lastSuccessAt": "2026-11-18T08:34:34.913Z",
       "newestPeriod": "2026-10",
-      "rows": 1085,
+      "rows": 1091,
       "lastError": null
     },
     "TPEx": {
       "consecutiveFetchFailures": 0,
       "ok": true,
-      "lastSuccessAt": "2026-11-17T09:14:38.983Z",
+      "lastSuccessAt": "2026-11-18T08:34:34.913Z",
       "newestPeriod": "2026-10",
       "rows": 898,
       "lastError": null,
@@ -19,8 +19,8 @@
     }
   },
   "profilesRefreshedAt": "2026-11-15T09:33:57.313Z",
-  "lastRunAt": "2026-11-17T09:14:38.983Z",
-  "lastChangeAt": "2026-11-15T09:33:57.313Z",
+  "lastRunAt": "2026-11-18T08:34:34.913Z",
+  "lastChangeAt": "2026-11-18T08:34:34.913Z",
   "pendingAlerts": [
     {
       "period": "2026-09",
@@ -15877,6 +15877,30 @@
     {
       "period": "2026-10",
       "code": "7848"
+    },
+    {
+      "period": "2026-10",
+      "code": "2850"
+    },
+    {
+      "period": "2026-10",
+      "code": "2851"
+    },
+    {
+      "period": "2026-10",
+      "code": "2881"
+    },
+    {
+      "period": "2026-10",
+      "code": "2882"
+    },
+    {
+      "period": "2026-10",
+      "code": "2883"
+    },
+    {
+      "period": "2026-10",
+      "code": "2884"
     }
   ],
   "profileFields": {
