@@ -15085,12 +15085,12 @@
   },
   "6949": {
     "market": "TWSE",
-    "nameZh": "沛爾生醫*-創",
+    "nameZh": "沛爾*-創",
     "nameEn": "PELL BMT",
     "fullNameEn": "",
     "industry": "22",
     "website": "https://www.pellbmt.com",
-    "profileUpdatedAt": "2026-10-20T03:39:10.703Z"
+    "profileUpdatedAt": "2026-11-28T08:56:02.564Z"
   },
   "6951": {
     "market": "TWSE",
@@ -15992,6 +15992,15 @@
     "website": "www.trplus.com.tw",
     "profileUpdatedAt": "2026-11-01T06:19:17.822Z"
   },
+  "7869": {
+    "market": "TPEx",
+    "nameZh": "宏于電機",
+    "nameEn": "HYEC",
+    "fullNameEn": "",
+    "industry": "05",
+    "website": "https://www.horngyu.com",
+    "profileUpdatedAt": "2026-11-28T08:56:04.392Z"
+  },
   "8011": {
     "market": "TWSE",
     "nameZh": "台通",
@@ -16570,12 +16579,12 @@
   },
   "8155": {
     "market": "TPEx",
-    "nameZh": "博智",
+    "nameZh": "博智電子",
     "nameEn": "ACCL",
     "fullNameEn": "",
     "industry": "28",
     "website": "www.accl.com.tw",
-    "profileUpdatedAt": "2026-10-20T03:43:46.784Z"
+    "profileUpdatedAt": "2026-11-28T08:56:04.392Z"
   },
   "8162": {
     "market": "TWSE",
